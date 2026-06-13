@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>和AI聊聊 · 韧竹小站</title>
+<style>
+/* ============================================================
+   全局
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --cream: #fefaf4;
+  --peach: #fdf3ea;
+  --green-soft: #8db88a;
+  --green-mid: #6a9a6a;
+  --green-dark: #4a7a4a;
+  --pink: #f0c0c0;
+  --gold: #e0c878;
+  --text: #4a4038;
+  --text-dim: #9a8e80;
+  --text-light: #b8a898;
+  --border: rgba(0,0,0,0.06);
+  --card-bg: rgba(255,255,255,0.7);
+  --shadow: 0 4px 20px rgba(0,0,0,0.04);
+  --shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: linear-gradient(170deg, #fefaf4 0%, #fdf3ea 25%, #faf5ee 50%, #f4f2ea 75%, #fefaf4 100%);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   小花装饰
+   ============================================================ */
+.flowers-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.flower {
+  position: absolute; font-size: 15px; opacity: 0.3;
+  animation: floatFlower 8s ease-in-out infinite;
+}
+.flower:nth-child(1) { top: 4%; left: 5%; animation-delay: 0s; font-size: 20px; }
+.flower:nth-child(2) { top: 10%; right: 8%; animation-delay: 1.2s; font-size: 14px; }
+.flower:nth-child(3) { top: 28%; left: 3%; animation-delay: 2.5s; font-size: 18px; }
+.flower:nth-child(4) { top: 42%; right: 5%; animation-delay: 0.8s; font-size: 22px; }
+.flower:nth-child(5) { top: 58%; left: 6%; animation-delay: 3s; font-size: 15px; }
+.flower:nth-child(6) { top: 72%; right: 10%; animation-delay: 1.8s; font-size: 19px; }
+.flower:nth-child(7) { top: 85%; left: 12%; animation-delay: 2.2s; font-size: 16px; }
+.flower:nth-child(8) { top: 18%; left: 16%; animation-delay: 3.5s; font-size: 13px; }
+.flower:nth-child(9) { top: 62%; right: 18%; animation-delay: 0.5s; font-size: 17px; }
+.flower:nth-child(10) { top: 48%; left: 24%; animation-delay: 2.8s; font-size: 14px; }
+.flower:nth-child(11) { top: 6%; right: 24%; animation-delay: 1.5s; font-size: 21px; }
+.flower:nth-child(12) { top: 90%; right: 28%; animation-delay: 3.2s; font-size: 15px; }
+
+@keyframes floatFlower {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(3deg); }
+  50% { transform: translateY(-4px) rotate(-2deg); }
+  75% { transform: translateY(-16px) rotate(4deg); }
+}
+
+.container {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 18px 40px;
+}
+
+/* ============================================================
+   导航栏
+   ============================================================ */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 0; margin-bottom: 22px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-wrap: wrap; gap: 10px;
+  animation: fadeDown 0.6s ease-out;
+}
+.nav .logo {
+  font-size: 22px; font-weight: 700; letter-spacing: 4px;
+  color: var(--green-mid);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav .logo span { font-size: 24px; }
+.nav-links {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.nav-links a {
+  text-decoration: none; color: var(--text-dim);
+  font-size: 14px; letter-spacing: 2px; padding: 8px 16px;
+  border-radius: 10px; transition: all 0.25s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--green-mid);
+  background: rgba(125,184,138,0.08);
+}
+
+/* ============================================================
+   通用卡片
+   ============================================================ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+}
+.card h3 {
+  font-size: 14px; color: var(--green-mid); letter-spacing: 2px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* ============================================================
+   页面头部
+   ============================================================ */
+.page-header {
+  text-align: center; margin-bottom: 20px;
+  animation: fadeDown 0.8s ease-out;
+}
+.page-header .title {
+  font-size: 36px; font-weight: 700; letter-spacing: 6px;
+  background: linear-gradient(135deg, #6aaa7a 0%, #8dc89a 40%, #a8c870 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 6px rgba(100,160,120,0.2));
+}
+.page-header .sub {
+  font-size: 14px; color: var(--text-dim); letter-spacing: 3px; margin-top: 4px;
+}
+
+/* ============================================================
+   三栏
+   ============================================================ */
+.top-row {
+  display: grid;
+  grid-template-columns: 230px 1fr 270px;
+  gap: 16px; margin-bottom: 20px;
+}
+
+/* ---- 熊猫 ---- */
+.panda-col {
+  display: flex; flex-direction: column; align-items: center;
+}
+.panda-stage {
+  position: relative; width: 150px; height: 195px;
+  display: flex; align-items: center; justify-content: center;
+}
+.panda-svg {
+  width: 140px; height: 185px;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.1));
+  animation: pandaFloat 4s ease-in-out infinite;
+  cursor: pointer; transition: transform 0.3s;
+}
+.panda-svg:hover { transform: scale(1.06); }
+.panda-svg:active { transform: scale(0.94); }
+@keyframes pandaFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.panda-name { font-size: 14px; font-weight: 600; color: var(--green-mid); letter-spacing: 2px; margin-bottom: 8px; }
+
+.wardrobe { width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.wardrobe-row { display: flex; align-items: center; gap: 5px; }
+.wardrobe-label { font-size: 10px; color: var(--text-dim); width: 34px; flex-shrink: 0; text-align: right; }
+.wardrobe-btn {
+  flex: 1; display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 8px; background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.08); border-radius: 8px;
+  color: var(--text); font-size: 11px; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.wardrobe-btn:hover {
+  background: rgba(125,184,138,0.12); border-color: rgba(125,184,138,0.3);
+}
+.wardrobe-btn .current { color: var(--green-mid); font-weight: 500; font-size: 10px; }
+.wardrobe-btn .arrow { color: var(--text-dim); font-size: 11px; transition: transform 0.2s; }
+.wardrobe-btn:hover .arrow { transform: rotate(90deg); }
+.wardrobe-reset {
+  margin-top: 4px; padding: 4px; width: 100%;
+  background: transparent; border: 1px dashed rgba(0,0,0,0.1);
+  border-radius: 8px; color: var(--text-dim); font-size: 10px;
+  cursor: pointer; letter-spacing: 2px; transition: all 0.2s; font-family: inherit;
+}
+.wardrobe-reset:hover { border-color: rgba(125,184,138,0.3); color: var(--text); }
+
+.sparkle {
+  position: absolute; pointer-events: none;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #f5c8a0;
+  animation: sparkleBurst 0.7s ease-out forwards;
+}
+@keyframes sparkleBurst {
+  0% { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(0); }
+}
+
+/* ---- 成长树 ---- */
+.tree-col {
+  display: flex; flex-direction: column; align-items: center;
+}
+.tree-area {
+  position: relative; width: 100%; height: 220px;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.tree-svg {
+  width: 150px; height: 220px;
+  filter: drop-shadow(0 0 20px rgba(100,160,120,0.15));
+  cursor: pointer;
+}
+.tree-svg .stalk-group { animation: treeSway 6s ease-in-out infinite; transform-origin: bottom center; }
+.tree-svg .leaf-group { animation: treeSway 5s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes treeSway { 0%,100%{transform:rotate(-1deg);} 50%{transform:rotate(1.2deg);} }
+.ground-halo {
+  position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 110px; height: 18px;
+  background: radial-gradient(ellipse, rgba(125,184,138,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: haloPulse 3s ease-in-out infinite;
+}
+@keyframes haloPulse { 0%,100%{opacity:0.5;transform:translateX(-50%)scale(1);} 50%{opacity:0.8;transform:translateX(-50%)scale(1.1);} }
+.tree-stage-tag {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  font-size: 12px; color: var(--green-mid); letter-spacing: 2px;
+  padding: 3px 12px; border-radius: 10px;
+  background: rgba(125,184,138,0.08);
+  border: 1px solid rgba(125,184,138,0.15);
+}
+
+/* ---- 右栏：心语卡片 ---- */
+.quote-col { display: flex; flex-direction: column; gap: 12px; }
+.quote-card {
+  text-align: center; min-height: 120px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.quote-card .quote-icon {
+  font-size: 26px; margin-bottom: 6px;
+  animation: quoteBounce 2s ease-in-out infinite;
+}
+@keyframes quoteBounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
+.quote-card .quote-text {
+  font-size: 13px; line-height: 1.8; color: var(--text);
+  letter-spacing: 1.5px; padding: 0 4px;
+  transition: opacity 0.6s ease;
+}
+.quote-card .quote-dots {
+  display: flex; gap: 5px; justify-content: center; margin-top: 10px;
+}
+.quote-card .quote-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(0,0,0,0.08); transition: all 0.4s; cursor: pointer;
+}
+.quote-card .quote-dot.cur {
+  background: var(--green-mid);
+  box-shadow: 0 0 8px rgba(90,154,106,0.3);
+}
+
+.joke-card { position: relative; }
+.joke-card .joke-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+.joke-card .joke-btn {
+  background: rgba(125,184,138,0.08); border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 8px; color: var(--text-dim); cursor: pointer;
+  padding: 4px 10px; font-size: 11px; font-family: inherit;
+  letter-spacing: 1px; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.joke-card .joke-btn:hover { background: rgba(125,184,138,0.18); color: var(--text); }
+.joke-card .joke-text {
+  font-size: 12px; line-height: 1.7; color: var(--text);
+  letter-spacing: 1px; transition: opacity 0.5s ease;
+  min-height: 42px; display: flex; align-items: center; justify-content: center;
+  white-space: pre-line;
+}
+
+/* ============================================================
+   快捷入口
+   ============================================================ */
+.quick-section {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 20px;
+  animation: fadeUp 1.1s ease-out;
+}
+.quick-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 22px; border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.5);
+  box-shadow: var(--shadow);
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text); text-decoration: none; font-family: inherit;
+  backdrop-filter: blur(6px);
+  -webkit-tap-highlight-color: transparent;
+}
+.quick-btn:hover {
+  transform: translateY(-3px);
+  border-color: rgba(125,184,138,0.3);
+  box-shadow: var(--shadow-hover);
+  background: rgba(255,255,255,0.8);
+}
+.quick-btn .q-icon { font-size: 28px; transition: transform 0.3s; }
+.quick-btn:hover .q-icon { transform: scale(1.12); }
+.quick-btn .q-info { text-align: left; }
+.quick-btn .q-label { font-size: 15px; font-weight: 600; letter-spacing: 2px; color: var(--green-mid); }
+.quick-btn .q-hint { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+
+/* ============================================================
+   聊天区
+   ============================================================ */
+.chat-section {
+  margin-bottom: 20px;
+  animation: fadeUp 1.3s ease-out;
+}
+.chat-section .card { padding: 14px; }
+.chat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; flex-wrap: wrap; gap: 6px;
+}
+.chat-header h3 { margin: 0; }
+.chat-frame-wrap {
+  border-radius: 16px; overflow: hidden;
+  border: 2px solid rgba(125,184,138,0.15);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.06);
+  background: #fff;
+}
+.chat-frame-wrap iframe {
+  display: block; width: 100%; height: 450px; border: none;
+}
+
+/* ============================================================
+   成长足迹
+   ============================================================ */
+.log-section {
+  margin-bottom: 20px;
+  animation: fadeUp 1.5s ease-out;
+}
+.log-list { display: flex; gap: 14px; flex-wrap: wrap; }
+.log-item {
+  flex: 1; min-width: 170px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.3s; cursor: default;
+}
+.log-item:hover { transform: translateY(-2px); }
+.log-item.done { border-left: 3px solid var(--green-mid); }
+.log-item.pending { border-left: 3px solid rgba(0,0,0,0.08); opacity: 0.55; }
+.log-check {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+}
+.log-item.done .log-check { background: rgba(125,184,138,0.15); color: var(--green-mid); }
+.log-item.pending .log-check { background: rgba(0,0,0,0.03); color: #aaa; }
+.log-title { font-size: 13px; font-weight: 500; }
+.log-date { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.log-tag {
+  padding: 3px 8px; border-radius: 8px; font-size: 10px;
+  letter-spacing: 1px; flex-shrink: 0; margin-left: auto;
+}
+.log-tag.emotion { background: rgba(210,150,180,0.15); color: #b08090; }
+.log-tag.interpersonal { background: rgba(130,160,200,0.15); color: #6a8ab8; }
+.log-tag.behavior { background: rgba(200,160,120,0.15); color: #b08060; }
+
+/* ============================================================
+   底部
+   ============================================================ */
+.footer {
+  text-align: center; padding: 28px 0 8px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  animation: fadeUp 1.8s ease-out;
+}
+.footer .f-brand {
+  font-size: 13px; color: var(--green-mid); letter-spacing: 2px; font-weight: 500;
+  margin-bottom: 2px;
+}
+.footer .f-team {
+  font-size: 12px; color: var(--text-dim); letter-spacing: 2px;
+  margin-bottom: 2px;
+}
+.designer-mark {
+  position: fixed; bottom: 12px; left: 16px; z-index: 0;
+  font-size: 10px; color: var(--text-light);
+  opacity: 0.3; letter-spacing: 1px; pointer-events: none;
+}
+.footer .f-school {
+  font-size: 11px; color: var(--text-light); letter-spacing: 1px;
+}
+
+/* ============================================================
+   动画
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   响应式：平板
+   ============================================================ */
+@media (max-width: 960px) {
+  .top-row {
+    grid-template-columns: 1fr;
+    max-width: 520px; margin-left: auto; margin-right: auto;
+  }
+  .tree-area { height: 200px; }
+  .quote-col { flex-direction: row; gap: 12px; }
+  .quote-col .card { flex: 1; }
+  .chat-frame-wrap iframe { height: 380px; }
+}
+
+/* ============================================================
+   响应式：手机
+   ============================================================ */
+@media (max-width: 640px) {
+  .container { padding: 0 10px 32px; }
+  .nav { padding: 14px 0; margin-bottom: 16px; }
+  .nav .logo { font-size: 18px; letter-spacing: 2px; }
+  .nav-links a { font-size: 12px; padding: 6px 10px; letter-spacing: 1px; }
+  .page-header .title { font-size: 28px; letter-spacing: 4px; }
+  .page-header .sub { font-size: 12px; letter-spacing: 2px; }
+
+  .top-row { grid-template-columns: 1fr; max-width: 100%; gap: 10px; margin-bottom: 14px; }
+  .card { padding: 12px; border-radius: 14px; }
+  .card h3 { font-size: 13px; margin-bottom: 8px; }
+
+  .panda-stage { width: 130px; height: 170px; }
+  .panda-svg { width: 120px; height: 160px; }
+  .panda-name { font-size: 13px; }
+  .wardrobe-btn { padding: 7px 10px; font-size: 12px; }
+  .wardrobe-label { font-size: 11px; width: 36px; }
+  .wardrobe-reset { padding: 6px; font-size: 11px; }
+
+  .tree-area { height: 180px; }
+  .tree-svg { width: 130px; height: 190px; }
+
+  .quote-col { flex-direction: row; gap: 10px; }
+  .quote-col .card { flex: 1; }
+  .quote-card { min-height: auto; }
+  .quote-card .quote-text { font-size: 11px; }
+  .joke-card .joke-text { font-size: 11px; min-height: 36px; }
+
+  .quick-section { flex-direction: column; align-items: stretch; gap: 8px; }
+  .quick-btn { padding: 14px 16px; justify-content: center; }
+  .quick-btn .q-icon { font-size: 24px; }
+  .quick-btn .q-label { font-size: 14px; }
+
+  .chat-frame-wrap iframe { height: 380px; }
+  .log-list { flex-direction: column; gap: 8px; }
+  .log-item { min-width: auto; padding: 10px 12px; }
+
+  .flower:nth-child(7), .flower:nth-child(8),
+  .flower:nth-child(11), .flower:nth-child(12) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- 小花装饰 -->
+<div class="flowers-bg">
+  <span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌿</span>
+  <span class="flower">💮</span><span class="flower">🌺</span><span class="flower">🍃</span>
+  <span class="flower">🌷</span><span class="flower">✿</span><span class="flower">🌾</span>
+  <span class="flower">🌻</span><span class="flower">🪷</span><span class="flower">🌱</span>
+</div>
+
+<div class="container">
+
+  <!-- ========== 导航栏 ========== -->
+  <nav class="nav">
+    <a href="index.html" class="logo"><span>🎋</span>韧竹小站</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="knowledge.html">心理知识</a>
+      <a href="chat.html" class="active">和AI聊聊</a>
+      <a href="about.html">关于我们</a>
+    </div>
+  </nav>
+
+  <!-- ========== 页面头部 ========== -->
+  <header class="page-header">
+    <h1 class="title">韧 行</h1>
+    <p class="sub">一个愿意倾听的 AI 成长伙伴</p>
+  </header>
+
+  <!-- ========== 三栏：熊猫 + 成长树 + 心语笑话 ========== -->
+  <div class="top-row">
+
+    <!-- 左：熊猫伙伴 -->
+    <div class="card panda-col">
+      <h3>🐼 成长伙伴</h3>
+      <div class="panda-stage" id="pandaStage"></div>
+      <div class="panda-name" id="pandaName">小韧</div>
+      <div class="wardrobe">
+        <div class="wardrobe-row">
+          <span class="wardrobe-label">👒帽子</span>
+          <button class="wardrobe-btn" onclick="cycleItem('hat')">
+            <span class="current" id="hatLabel">无</span><span class="arrow">→</span>
+          </button>
+        </div>
+        <div class="wardrobe-row">
+          <span class="wardrobe-label">🧣围巾</span>
+          <button class="wardrobe-btn" onclick="cycleItem('scarf')">
+            <span class="current" id="scarfLabel">竹绿</span><span class="arrow">→</span>
+          </button>
+        </div>
+        <div class="wardrobe-row">
+          <span class="wardrobe-label">👔衣服</span>
+          <button class="wardrobe-btn" onclick="cycleItem('outfit')">
+            <span class="current" id="outfitLabel">默认</span><span class="arrow">→</span>
+          </button>
+        </div>
+        <div class="wardrobe-row">
+          <span class="wardrobe-label">🎋手持</span>
+          <button class="wardrobe-btn" onclick="cycleItem('hand')">
+            <span class="current" id="handLabel">无</span><span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
+      <button class="wardrobe-reset" onclick="resetWardrobe()">↺ 恢复默认</button>
+    </div>
+
+    <!-- 中：成长树 -->
+    <div class="card tree-col">
+      <h3>🎋 我的成长树</h3>
+      <div class="tree-area">
+        <div class="ground-halo"></div>
+        <div class="tree-stage-tag" id="treeStageTag">🌿 韧苗</div>
+        <svg class="tree-svg" viewBox="0 0 200 300" id="treeSvg">
+          <defs>
+            <linearGradient id="stalkGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#5a9a5a"/><stop offset="50%" stop-color="#7db86a"/><stop offset="100%" stop-color="#5a9a5a"/>
+            </linearGradient>
+            <linearGradient id="leafGrad1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7dc88a"/><stop offset="100%" stop-color="#4a8a4a"/>
+            </linearGradient>
+            <linearGradient id="leafGrad2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#8fd89a"/><stop offset="100%" stop-color="#5a9a5a"/>
+            </linearGradient>
+            <radialGradient id="nodeGlow">
+              <stop offset="0%" stop-color="#b8e8c0" stop-opacity="0.6"/><stop offset="100%" stop-color="#b8e8c0" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="100" cy="285" rx="58" ry="8" fill="rgba(125,184,138,0.08)"/>
+          <g class="stalk-group">
+            <rect x="93" y="205" width="14" height="44" rx="2" fill="url(#stalkGrad)"/>
+            <ellipse cx="100" cy="247" rx="9" ry="2.5" fill="rgba(255,255,255,0.2)"/>
+            <rect x="94" y="155" width="12" height="52" rx="2" fill="url(#stalkGrad)"/>
+            <ellipse cx="100" cy="206" rx="8" ry="2.5" fill="rgba(255,255,255,0.2)"/>
+            <rect x="95" y="105" width="10" height="52" rx="2" fill="url(#stalkGrad)"/>
+            <ellipse cx="100" cy="156" rx="7" ry="2" fill="rgba(255,255,255,0.2)"/>
+            <rect x="96" y="58" width="8" height="49" rx="2" fill="url(#stalkGrad)"/>
+            <ellipse cx="100" cy="106" rx="6" ry="2" fill="rgba(255,255,255,0.2)"/>
+            <rect x="97" y="20" width="6" height="40" rx="2" fill="url(#stalkGrad)"/>
+            <circle cx="100" cy="247" r="3" fill="url(#nodeGlow)"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
+            <circle cx="100" cy="206" r="3" fill="url(#nodeGlow)"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" begin="0.6s" repeatCount="indefinite"/></circle>
+            <circle cx="100" cy="156" r="3" fill="url(#nodeGlow)"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" begin="1.2s" repeatCount="indefinite"/></circle>
+            <circle cx="100" cy="106" r="3" fill="url(#nodeGlow)"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" begin="1.8s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="leaf-group">
+            <path d="M94 155 Q68 132 52 142" stroke="#5a9a5a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="56" cy="140" rx="12" ry="4" fill="url(#leafGrad1)" transform="rotate(-22,56,140)" opacity="0.85"/>
+            <ellipse cx="48" cy="144" rx="10" ry="3.5" fill="url(#leafGrad2)" transform="rotate(-32,48,144)" opacity="0.75"/>
+            <path d="M96 110 Q126 86 146 96" stroke="#5a9a5a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="140" cy="94" rx="11" ry="3.5" fill="url(#leafGrad1)" transform="rotate(22,140,94)" opacity="0.85"/>
+            <ellipse cx="148" cy="98" rx="9" ry="3" fill="url(#leafGrad2)" transform="rotate(32,148,98)" opacity="0.75"/>
+            <path d="M97 58 Q78 38 62 40" stroke="#5a9a5a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <ellipse cx="66" cy="38" rx="9" ry="3.5" fill="url(#leafGrad2)" transform="rotate(-28,66,38)" opacity="0.9"/>
+            <ellipse cx="58" cy="40" rx="7" ry="3" fill="url(#leafGrad1)" transform="rotate(-38,58,40)" opacity="0.8"/>
+            <path d="M98 52 Q118 30 134 28" stroke="#5a9a5a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <ellipse cx="130" cy="27" rx="8" ry="3" fill="url(#leafGrad2)" transform="rotate(24,130,27)" opacity="0.9"/>
+            <ellipse cx="138" cy="30" rx="6" ry="2.5" fill="url(#leafGrad1)" transform="rotate(34,138,30)" opacity="0.8"/>
+            <circle cx="62" cy="142" r="2.5" fill="#b8e8c0" opacity="0.5">
+              <animate attributeName="cy" values="142;108;74" dur="4.5s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0.25;0" dur="4.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="138" cy="88" r="2" fill="#c8f0d0" opacity="0.4">
+              <animate attributeName="cy" values="88;58;28" dur="4s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.4;0.2;0" dur="4s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 右：心语 + 笑话 -->
+    <div class="quote-col">
+      <div class="card quote-card" id="quoteCard">
+        <h3>💚 韧行心语</h3>
+        <div class="quote-icon" id="quoteIcon">🌱</div>
+        <div class="quote-text" id="quoteText"></div>
+        <div class="quote-dots" id="quoteDots"></div>
+      </div>
+      <div class="card joke-card">
+        <div class="joke-header">
+          <h3 style="margin:0;">😄 轻松一刻</h3>
+          <button class="joke-btn" onclick="refreshJoke()">🔄 换一个</button>
+        </div>
+        <div class="joke-text" id="jokeText"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 快捷入口 ========== -->
+  <div class="quick-section">
+    <button class="quick-btn" onclick="goChat()">
+      <span class="q-icon">💬</span>
+      <span class="q-info">
+        <div class="q-label">开始聊聊</div>
+        <div class="q-hint">和韧小行说说你的近况</div>
+      </span>
+    </button>
+    <button class="quick-btn" onclick="goChat()">
+      <span class="q-icon">🎯</span>
+      <span class="q-info">
+        <div class="q-label">学个小方法</div>
+        <div class="q-hint">3分钟 · 学会一个应对烦恼的小技巧</div>
+      </span>
+    </button>
+  </div>
+
+  <!-- ========== 聊天区 ========== -->
+  <div class="chat-section" id="chatSection">
+    <div class="card">
+      <div class="chat-header">
+        <h3>💬 韧小行 · 随时聊聊</h3>
+        <span style="font-size:10px;color:var(--text-dim);letter-spacing:1px;">一个愿意倾听的 AI 伙伴</span>
+      </div>
+      <div class="chat-frame-wrap">
+        <iframe
+          src="https://agent.gjt-smart.com/chatbot/sBYvQb7defYnSGt5"
+          allow="microphone"
+          id="chatIframe"
+          title="韧小行智能体">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 成长足迹 ========== -->
+  <div class="log-section">
+    <div class="card">
+      <h3>📜 成长足迹</h3>
+      <div class="log-list">
+        <div class="log-item done">
+          <div class="log-check">✓</div>
+          <div>
+            <div class="log-title">第一次聊天 · 认识了自己</div>
+            <div class="log-date">06-05 · 学会了识别和接纳情绪</div>
+          </div>
+          <span class="log-tag emotion">情绪</span>
+        </div>
+        <div class="log-item done">
+          <div class="log-check">✓</div>
+          <div>
+            <div class="log-title">第二次聊天 · 学会换位思考</div>
+            <div class="log-date">06-09 · 练习了换椅子法</div>
+          </div>
+          <span class="log-tag interpersonal">人际</span>
+        </div>
+        <div class="log-item pending">
+          <div class="log-check">○</div>
+          <div>
+            <div class="log-title">下次聊聊 · 试试小行动</div>
+            <div class="log-date">等你来 · 学习用行动改变感受</div>
+          </div>
+          <span class="log-tag behavior">行动</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 底部 ========== -->
+  <footer class="footer">
+    <div class="f-brand">韧竹小站</div>
+    <div class="f-team">韧心计划 · 北海职业学院心理健康教育团队</div>
+    <div class="f-school">北海职业学院</div>
+    <div class="designer-mark">design by yulinlin</div>
+  </footer>
+</div>
+
+<script>
+// ================================================================
+// 1. 快捷按钮 → 滚动到聊天区
+// ================================================================
+function goChat() {
+  document.getElementById('chatSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  var btns = document.querySelectorAll('.quick-btn');
+  btns.forEach(function(b) { b.style.borderColor = 'rgba(125,184,138,0.5)'; b.style.boxShadow = '0 0 20px rgba(125,184,138,0.15)'; });
+  setTimeout(function() {
+    btns.forEach(function(b) { b.style.borderColor = 'rgba(0,0,0,0.06)'; b.style.boxShadow = ''; });
+  }, 2000);
+}
+
+// ================================================================
+// 2. 熊猫换装
+// ================================================================
+var wardrobe = { hat: 0, scarf: 1, outfit: 0, hand: 0 };
+var hatOptions = ['无', '竹叶冠', '小草', '蝴蝶结', '学士帽'];
+var scarfOptions = ['无', '竹绿', '天蓝', '暖橙', '樱粉'];
+var scarfColors = ['#8fbf8f', '#8fbf8f', '#8ab8d8', '#e8b878', '#e8a8b8'];
+var outfitOptions = ['默认', '绿马甲', '蓝卫衣', '红背心'];
+var handOptions = ['无', '竹子', '小花', '书本'];
+
+function cycleItem(type) {
+  var len = type === 'hat' ? 5 : type === 'scarf' ? 5 : type === 'outfit' ? 4 : 4;
+  wardrobe[type] = (wardrobe[type] + 1) % len;
+  updateLabels(); renderPanda(); spawnSparkles();
+}
+function resetWardrobe() {
+  wardrobe.hat = 0; wardrobe.scarf = 1; wardrobe.outfit = 0; wardrobe.hand = 0;
+  updateLabels(); renderPanda();
+}
+function updateLabels() {
+  document.getElementById('hatLabel').textContent = hatOptions[wardrobe.hat];
+  document.getElementById('scarfLabel').textContent = scarfOptions[wardrobe.scarf];
+  document.getElementById('outfitLabel').textContent = outfitOptions[wardrobe.outfit];
+  document.getElementById('handLabel').textContent = handOptions[wardrobe.hand];
+}
+function spawnSparkles() {
+  var stage = document.getElementById('pandaStage');
+  for (var i = 0; i < 10; i++) {
+    var s = document.createElement('div'); s.className = 'sparkle';
+    s.style.left = '50%'; s.style.top = '40%';
+    s.style.setProperty('--sx', (Math.random()-0.5)*90+'px');
+    s.style.setProperty('--sy', (Math.random()-0.5)*90+'px');
+    s.style.animationDuration = (0.4+Math.random()*0.5)+'s';
+    stage.appendChild(s);
+    setTimeout(function(el){ el.remove(); }, 700, s);
+  }
+}
+
+function renderPanda() {
+  var stage = document.getElementById('pandaStage');
+  var h = wardrobe.hat, sc = wardrobe.scarf, o = wardrobe.outfit, hd = wardrobe.hand;
+  var scCol = scarfColors[sc];
+
+  stage.innerHTML =
+  '<svg class="panda-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs>'+
+      '<radialGradient id="bodyGrad" cx="50%" cy="40%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f0f0e8"/></radialGradient>'+
+      '<radialGradient id="bellyGrad" cx="50%" cy="40%"><stop offset="0%" stop-color="#fefefa"/><stop offset="100%" stop-color="#f2f0e8"/></radialGradient>'+
+    '</defs>'+
+    '<ellipse cx="65" cy="58" rx="20" ry="18" fill="#222"/>'+
+    '<ellipse cx="135" cy="58" rx="20" ry="18" fill="#222"/>'+
+    '<ellipse cx="100" cy="180" rx="55" ry="60" fill="url(#bodyGrad)"/>'+
+    '<ellipse cx="100" cy="185" rx="38" ry="42" fill="url(#bellyGrad)"/>'+
+    '<ellipse cx="65" cy="230" rx="22" ry="16" fill="#222" transform="rotate(-10,65,230)"/>'+
+    '<ellipse cx="135" cy="230" rx="22" ry="16" fill="#222" transform="rotate(10,135,230)"/>'+
+    '<ellipse cx="42" cy="170" rx="18" ry="28" fill="#222" transform="rotate(20,42,170)"/>'+
+    '<ellipse cx="158" cy="170" rx="18" ry="28" fill="#222" transform="rotate(-20,158,170)"/>'+
+    '<circle cx="100" cy="90" r="48" fill="url(#bodyGrad)"/>'+
+    '<ellipse cx="78" cy="86" rx="16" ry="20" fill="#222" transform="rotate(-8,78,86)"/>'+
+    '<ellipse cx="122" cy="86" rx="16" ry="20" fill="#222" transform="rotate(8,122,86)"/>'+
+    '<circle cx="80" cy="84" r="7" fill="#fff"/><circle cx="120" cy="84" r="7" fill="#fff"/>'+
+    '<circle cx="81" cy="83" r="4" fill="#222"/><circle cx="82" cy="81.5" r="1.5" fill="#fff"/>'+
+    '<circle cx="119" cy="83" r="4" fill="#222"/><circle cx="120" cy="81.5" r="1.5" fill="#fff"/>'+
+    '<ellipse cx="100" cy="98" rx="7" ry="5" fill="#333"/>'+
+    '<path d="M94 104 Q100 110 106 104" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="64" cy="96" r="7" fill="#f0c0c0" opacity="0.35"/>'+
+    '<circle cx="136" cy="96" r="7" fill="#f0c0c0" opacity="0.35"/>'+
+    (o===0 ? '<path d="M85 125 L100 138 L115 125" stroke="#d0d0c8" stroke-width="2" fill="none" stroke-linecap="round"/>' :
+     o===1 ? '<path d="M48 130 Q50 155 55 180 L100 195 L145 180 Q150 155 152 130 L130 135 Q125 148 120 145 L100 155 L80 145 Q75 148 70 135 Z" fill="rgba(125,184,138,0.5)" stroke="rgba(125,184,138,0.7)" stroke-width="1.5"/>' :
+     o===2 ? '<path d="M46 125 L44 185 Q60 210 100 215 Q140 210 156 185 L154 125 L130 130 Q120 145 110 140 L100 148 L90 140 Q80 145 70 130 Z" fill="rgba(130,160,210,0.5)" stroke="rgba(130,160,210,0.7)" stroke-width="1.5"/>' :
+     '<path d="M50 128 Q55 155 58 180 L100 192 L142 180 Q145 155 150 128 L130 133 Q125 145 118 140 L100 150 L82 140 Q75 145 70 133 Z" fill="rgba(220,140,130,0.45)" stroke="rgba(220,140,130,0.65)" stroke-width="1.5"/>')+
+    (sc===0 ? '' : '<path d="M60 120 Q100 128 140 120" stroke="'+scCol+'" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.85"/><path d="M75 122 Q78 142 82 148 Q86 140 88 124" fill="'+scCol+'" opacity="0.8"/><path d="M100 124 L100 152 Q102 158 104 152 L104 125" fill="'+scCol+'" opacity="0.55"/>')+
+    (h===0 ? '' : h===1 ? '<ellipse cx="100" cy="46" rx="18" ry="6" fill="#7db86a"/><ellipse cx="82" cy="40" rx="8" ry="14" fill="#8dc87a" transform="rotate(-25,82,40)"/><ellipse cx="100" cy="36" rx="7" ry="15" fill="#7db86a"/><ellipse cx="118" cy="40" rx="8" ry="14" fill="#8dc87a" transform="rotate(25,118,40)"/>' :
+     h===2 ? '<path d="M95 50 Q92 30 88 24" stroke="#7db86a" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="88" cy="22" rx="5" ry="8" fill="#8dc87a" transform="rotate(-10,88,22)"/><path d="M100 46 Q100 26 100 18" stroke="#7db86a" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="100" cy="16" rx="5" ry="8" fill="#8dc87a"/><path d="M105 50 Q108 32 112 26" stroke="#7db86a" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="112" cy="24" rx="5" ry="8" fill="#8dc87a" transform="rotate(10,112,24)"/>' :
+     h===3 ? '<ellipse cx="88" cy="44" rx="10" ry="7" fill="#f0b0c0" transform="rotate(-15,88,44)"/><ellipse cx="112" cy="44" rx="10" ry="7" fill="#f0b0c0" transform="rotate(15,112,44)"/><circle cx="100" cy="46" r="4" fill="#e090a0"/>' :
+     '<rect x="74" y="40" width="52" height="5" rx="2" fill="#3a3a4a"/><rect x="88" y="30" width="24" height="15" rx="2" fill="#3a3a4a"/><path d="M112 44 L122 50" stroke="#d4c86a" stroke-width="1.5" fill="none"/><circle cx="123" cy="52" r="3" fill="#d4c86a"/>')+
+    (hd===0 ? '' : hd===1 ? '<rect x="150" y="120" width="5" height="50" rx="2" fill="#6a9a5a" transform="rotate(15,152,145)"/><ellipse cx="168" cy="168" rx="6" ry="2.5" fill="#6a9a5a" transform="rotate(15,168,168)"/><ellipse cx="166" cy="140" rx="5" ry="2" fill="#7db86a" transform="rotate(15,166,140)"/>' :
+     hd===2 ? '<circle cx="158" cy="148" r="5" fill="#f8c8c8"/><circle cx="158" cy="148" r="2.5" fill="#faf0a8"/><rect x="156" y="153" width="2" height="18" rx="1" fill="#7db86a" transform="rotate(5,157,162)"/>' :
+     '<rect x="142" y="140" width="22" height="16" rx="1.5" fill="#7a9ab8" transform="rotate(-8,153,148)"/><rect x="144" y="142" width="18" height="12" rx="0.5" fill="#f8f8f0" transform="rotate(-8,153,148)"/><line x1="153" y1="142" x2="153" y2="154" stroke="#ccc" stroke-width="0.5" transform="rotate(-8,153,148)"/>')+
+  '</svg>';
+}
+
+renderPanda();
+
+// ================================================================
+// 3. 韧行心语轮播
+// ================================================================
+var QUOTES = [
+  { icon: '🌱', text: '你已经比昨天的自己更进一步了，这本身就是一种成长。' },
+  { icon: '🎋', text: '竹子用了四年只长了3厘米，但从第五年开始，每天长30厘米。你也是。' },
+  { icon: '💪', text: '不是因为没有挫折才坚强，而是因为经历了挫折，才学会了坚强。' },
+  { icon: '🌟', text: '每一次跌倒，都在为下一次站得更稳做准备。' },
+  { icon: '🌿', text: '成长不是一场竞赛，你不需要和别人比速度，只需要比昨天的自己好一点点。' },
+  { icon: '🍃', text: '允许自己偶尔脆弱，那也是你真实的一部分。' },
+  { icon: '✨', text: '世界上没有白走的路，每一次尝试都在雕刻未来的你。' },
+  { icon: '🕊️', text: '当你想放弃的时候，想想当初为什么走到了这里。' },
+  { icon: '🌈', text: '风雨过后不一定有彩虹，但一定会有更清澈的天空。' },
+  { icon: '🌻', text: '向日葵看不到太阳也会开放，你要学会在阴天里依然向阳生长。' },
+  { icon: '🏔️', text: '爬上山顶不是为了让世界看到你，而是为了让你看到更大的世界。' },
+  { icon: '💡', text: '困扰你的不是事情本身，而是你对事情的看法。换个角度，世界就不一样了。' }
+];
+
+var quoteIdx = 0;
+var quoteEl = document.getElementById('quoteText');
+var quoteIconEl = document.getElementById('quoteIcon');
+var quoteDotsEl = document.getElementById('quoteDots');
+
+QUOTES.forEach(function(_, i) {
+  var dot = document.createElement('div');
+  dot.className = 'quote-dot' + (i === 0 ? ' cur' : '');
+  dot.onclick = function() { quoteIdx = i; showQuote(i); };
+  quoteDotsEl.appendChild(dot);
+});
+
+function showQuote(i) {
+  var q = QUOTES[i];
+  quoteEl.style.opacity = '0';
+  setTimeout(function() {
+    quoteEl.textContent = q.text;
+    quoteIconEl.textContent = q.icon;
+    quoteEl.style.opacity = '1';
+    var dots = quoteDotsEl.querySelectorAll('.quote-dot');
+    dots.forEach(function(d, j) { d.classList.toggle('cur', j === i); });
+  }, 300);
+}
+
+setInterval(function() {
+  quoteIdx = (quoteIdx + 1) % QUOTES.length;
+  showQuote(quoteIdx);
+}, 4000);
+
+showQuote(0);
+
+// ================================================================
+// 4. 轻松一刻
+// ================================================================
+var JOKES = [
+  '心理咨询师问："你什么时候最放松？"\n来访者答："咨询结束的时候。"\n咨询师："……好的，我们下次继续。"',
+  '学生问："老师，总是焦虑怎么办？"\n心理老师说："别急，明天再来问我，我今晚先想想。"',
+  '心理课上学了"换位思考"后，室友对我说："我站在你的角度想了想，确实是你错了。"',
+  '为什么竹子不怕风？因为它是"空"的呀！心态空一点，烦恼就少一点～',
+  '大脑：该写作业了。\n身体：再刷5分钟。\n大脑：5分钟过去了。\n身体：那就再刷5分钟。\n——这就是心理学上的"时间感知偏差"。',
+  '人生就像骑自行车，想保持平衡就得不断前进。不过偶尔停下来看看风景，也是可以的。',
+  '拖延症患者的座右铭：今天的事，明天再说。明天的我，比今天的我更厉害！',
+  '考试前：我一定会认真复习！\n考试前夜：让我先整理一下桌面……再泡杯奶茶……再……天亮了。'
+];
+
+var jokeIdx = 0;
+function refreshJoke() {
+  var jokeEl = document.getElementById('jokeText');
+  jokeIdx = (jokeIdx + 1) % JOKES.length;
+  jokeEl.style.opacity = '0';
+  setTimeout(function() {
+    jokeEl.textContent = JOKES[jokeIdx];
+    jokeEl.style.opacity = '1';
+  }, 250);
+}
+document.getElementById('jokeText').textContent = JOKES[0];
+
+// ================================================================
+// 5. 成长树点击切换阶段
+// ================================================================
+var stageTags = ['🌱 韧芽', '🌿 韧苗', '🎋 韧竹'];
+var stageIdx = 1;
+document.getElementById('treeSvg').addEventListener('click', function() {
+  stageIdx = (stageIdx + 1) % 3;
+  document.getElementById('treeStageTag').textContent = stageTags[stageIdx];
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>韧竹小站</title>
+<style>
+/* ============================================================
+   全局变量
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --cream: #fefaf4;
+  --peach: #fdf3ea;
+  --green-soft: #8db88a;
+  --green-mid: #6a9a6a;
+  --green-dark: #4a7a4a;
+  --pink: #f0c0c0;
+  --gold: #e0c878;
+  --text: #4a4038;
+  --text-dim: #9a8e80;
+  --text-light: #b8a898;
+  --border: rgba(0,0,0,0.06);
+  --card-bg: rgba(255,255,255,0.7);
+  --shadow: 0 4px 20px rgba(0,0,0,0.04);
+  --shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: linear-gradient(170deg, #fefaf4 0%, #fdf3ea 25%, #faf5ee 50%, #f4f2ea 75%, #fefaf4 100%);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   小花装饰
+   ============================================================ */
+.flowers-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.flower {
+  position: absolute; font-size: 15px; opacity: 0.3;
+  animation: floatFlower 8s ease-in-out infinite;
+}
+.flower:nth-child(1) { top: 4%; left: 5%; animation-delay: 0s; font-size: 20px; }
+.flower:nth-child(2) { top: 10%; right: 8%; animation-delay: 1.2s; font-size: 14px; }
+.flower:nth-child(3) { top: 28%; left: 3%; animation-delay: 2.5s; font-size: 18px; }
+.flower:nth-child(4) { top: 42%; right: 5%; animation-delay: 0.8s; font-size: 22px; }
+.flower:nth-child(5) { top: 58%; left: 6%; animation-delay: 3s; font-size: 15px; }
+.flower:nth-child(6) { top: 72%; right: 10%; animation-delay: 1.8s; font-size: 19px; }
+.flower:nth-child(7) { top: 85%; left: 12%; animation-delay: 2.2s; font-size: 16px; }
+.flower:nth-child(8) { top: 18%; left: 16%; animation-delay: 3.5s; font-size: 13px; }
+.flower:nth-child(9) { top: 62%; right: 18%; animation-delay: 0.5s; font-size: 17px; }
+.flower:nth-child(10) { top: 48%; left: 24%; animation-delay: 2.8s; font-size: 14px; }
+.flower:nth-child(11) { top: 6%; right: 24%; animation-delay: 1.5s; font-size: 21px; }
+.flower:nth-child(12) { top: 90%; right: 28%; animation-delay: 3.2s; font-size: 15px; }
+
+@keyframes floatFlower {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(3deg); }
+  50% { transform: translateY(-4px) rotate(-2deg); }
+  75% { transform: translateY(-16px) rotate(4deg); }
+}
+
+.container {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 18px 40px;
+}
+
+/* ============================================================
+   导航栏
+   ============================================================ */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 0; margin-bottom: 28px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-wrap: wrap; gap: 10px;
+  animation: fadeDown 0.6s ease-out;
+}
+.nav .logo {
+  font-size: 22px; font-weight: 700; letter-spacing: 4px;
+  color: var(--green-mid);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav .logo span { font-size: 24px; }
+.nav-links {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.nav-links a {
+  text-decoration: none; color: var(--text-dim);
+  font-size: 14px; letter-spacing: 2px; padding: 8px 16px;
+  border-radius: 10px; transition: all 0.25s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--green-mid);
+  background: rgba(125,184,138,0.08);
+}
+
+/* ============================================================
+   通用卡片
+   ============================================================ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+}
+.card h2 {
+  font-size: 20px; color: var(--green-dark); letter-spacing: 3px;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+}
+
+/* ============================================================
+   首页 Hero
+   ============================================================ */
+.hero {
+  text-align: center; padding: 48px 24px 56px;
+  animation: fadeUp 0.8s ease-out;
+}
+.hero .bamboo-icon {
+  font-size: 64px; display: block; margin-bottom: 12px;
+  animation: pandaFloat 4s ease-in-out infinite;
+}
+@keyframes pandaFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.hero h1 {
+  font-size: 52px; font-weight: 700; letter-spacing: 10px;
+  background: linear-gradient(135deg, #6aaa7a 0%, #8dc89a 40%, #a8c870 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 6px rgba(100,160,120,0.2));
+  margin-bottom: 12px;
+}
+.hero .tagline {
+  font-size: 17px; color: var(--text-dim); letter-spacing: 4px;
+  margin-bottom: 4px;
+}
+.hero .sub-tagline {
+  font-size: 13px; color: var(--text-light); letter-spacing: 2px;
+}
+
+/* ============================================================
+   引导区 "在这里，你可以……"
+   ============================================================ */
+.guide-section {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 28px;
+  animation: fadeUp 0.9s ease-out;
+}
+.guide-card {
+  text-align: center; padding: 28px 20px;
+  transition: all 0.3s;
+}
+.guide-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+.guide-card .g-icon { font-size: 40px; margin-bottom: 10px; }
+.guide-card .g-title {
+  font-size: 15px; font-weight: 600; color: var(--green-mid);
+  letter-spacing: 2px; margin-bottom: 6px;
+}
+.guide-card .g-desc {
+  font-size: 12px; color: var(--text-dim); line-height: 1.7;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   智能体入口卡片
+   ============================================================ */
+.agent-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; margin-bottom: 28px;
+  animation: fadeUp 1s ease-out;
+}
+.agent-card {
+  text-align: center; padding: 36px 24px;
+  cursor: pointer; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none; color: var(--text); display: block;
+}
+.agent-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(125,184,138,0.25);
+}
+.agent-card .agent-icon {
+  font-size: 56px; margin-bottom: 12px;
+  transition: transform 0.35s;
+}
+.agent-card:hover .agent-icon { transform: scale(1.08); }
+.agent-card .agent-name {
+  font-size: 24px; font-weight: 700; letter-spacing: 3px;
+  color: var(--green-mid); margin-bottom: 8px;
+}
+.agent-card .agent-desc {
+  font-size: 13px; color: var(--text-dim); line-height: 1.8;
+  letter-spacing: 1px;
+}
+.agent-card.coming-soon {
+  opacity: 0.65; cursor: default;
+}
+.agent-card.coming-soon:hover { transform: translateY(-2px); }
+.agent-card .badge {
+  display: inline-block; padding: 4px 12px; border-radius: 10px;
+  font-size: 11px; letter-spacing: 2px;
+  background: rgba(200,160,100,0.12); color: #b09060;
+  margin-top: 10px;
+}
+
+/* ============================================================
+   知识预览卡片
+   ============================================================ */
+.preview-section {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 28px;
+  animation: fadeUp 1.2s ease-out;
+}
+.preview-card {
+  padding: 24px 20px; text-align: center;
+  text-decoration: none; color: var(--text);
+  transition: all 0.3s; display: block;
+}
+.preview-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+.preview-card .p-icon { font-size: 36px; margin-bottom: 10px; }
+.preview-card .p-title {
+  font-size: 15px; font-weight: 600; color: var(--green-mid);
+  letter-spacing: 2px; margin-bottom: 6px;
+}
+.preview-card .p-desc {
+  font-size: 12px; color: var(--text-dim); line-height: 1.6;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   每日心语
+   ============================================================ */
+.daily-section {
+  margin-bottom: 28px;
+  animation: fadeUp 1.4s ease-out;
+}
+.daily-card {
+  text-align: center; padding: 28px 24px;
+  position: relative; overflow: hidden;
+}
+.daily-card::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(125,184,138,0.04);
+}
+.daily-card .daily-label {
+  font-size: 12px; color: var(--text-light); letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+.daily-card .daily-icon {
+  font-size: 28px; margin-bottom: 8px;
+  animation: quoteBounce 2s ease-in-out infinite;
+}
+@keyframes quoteBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.daily-card .daily-text {
+  font-size: 15px; line-height: 1.9; color: var(--text);
+  letter-spacing: 2px; max-width: 500px; margin: 0 auto;
+  transition: opacity 0.6s ease;
+}
+.daily-card .daily-refresh {
+  display: inline-block; margin-top: 12px;
+  padding: 6px 14px; border-radius: 10px;
+  background: rgba(125,184,138,0.06); border: 1px solid rgba(0,0,0,0.04);
+  color: var(--text-dim); cursor: pointer; font-size: 11px;
+  letter-spacing: 2px; transition: all 0.25s; font-family: inherit;
+}
+.daily-card .daily-refresh:hover {
+  background: rgba(125,184,138,0.14);
+  color: var(--green-mid);
+}
+
+/* ============================================================
+   底部
+   ============================================================ */
+.footer {
+  text-align: center; padding: 28px 0 8px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  animation: fadeUp 1.8s ease-out;
+}
+.footer .f-brand {
+  font-size: 13px; color: var(--green-mid); letter-spacing: 2px; font-weight: 500;
+  margin-bottom: 2px;
+}
+.footer .f-team {
+  font-size: 12px; color: var(--text-dim); letter-spacing: 2px;
+  margin-bottom: 2px;
+}
+.designer-mark {
+  position: fixed; bottom: 12px; left: 16px; z-index: 0;
+  font-size: 10px; color: var(--text-light);
+  opacity: 0.3; letter-spacing: 1px; pointer-events: none;
+}
+.footer .f-school {
+  font-size: 11px; color: var(--text-light); letter-spacing: 1px;
+}
+
+/* ============================================================
+   动画
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 768px) {
+  .hero { padding: 32px 16px 40px; }
+  .hero h1 { font-size: 38px; letter-spacing: 6px; }
+  .hero .tagline { font-size: 15px; }
+  .guide-section { grid-template-columns: 1fr; gap: 10px; }
+  .agent-grid { grid-template-columns: 1fr; gap: 14px; }
+  .agent-card { padding: 28px 20px; }
+  .agent-card .agent-name { font-size: 20px; }
+  .preview-section { grid-template-columns: 1fr; gap: 10px; }
+  .nav { padding: 14px 0; margin-bottom: 20px; }
+  .nav .logo { font-size: 18px; letter-spacing: 2px; }
+  .nav-links a { font-size: 12px; padding: 6px 10px; letter-spacing: 1px; }
+  .card { padding: 18px; border-radius: 14px; }
+  .card h2 { font-size: 17px; }
+  .daily-card .daily-text { font-size: 14px; }
+  .flower:nth-child(7), .flower:nth-child(8),
+  .flower:nth-child(11), .flower:nth-child(12) { display: none; }
+}
+
+@media (max-width: 640px) {
+  .hero h1 { font-size: 32px; letter-spacing: 4px; }
+  .hero .bamboo-icon { font-size: 48px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 小花装饰 -->
+<div class="flowers-bg">
+  <span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌿</span>
+  <span class="flower">💮</span><span class="flower">🌺</span><span class="flower">🍃</span>
+  <span class="flower">🌷</span><span class="flower">✿</span><span class="flower">🌾</span>
+  <span class="flower">🌻</span><span class="flower">🪷</span><span class="flower">🌱</span>
+</div>
+
+<div class="container">
+
+  <!-- ========== 导航栏 ========== -->
+  <nav class="nav">
+    <a href="index.html" class="logo"><span>🎋</span>韧竹小站</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">首页</a>
+      <a href="knowledge.html">心理知识</a>
+      <a href="chat.html">和AI聊聊</a>
+      <a href="about.html">关于我们</a>
+    </div>
+  </nav>
+
+  <!-- ========== Hero ========== -->
+  <section class="hero">
+    <span class="bamboo-icon">🎋</span>
+    <h1>韧竹小站</h1>
+    <p class="tagline">陪伴每一次成长</p>
+    <p class="sub-tagline">从韧芽到韧竹，你并不孤单</p>
+  </section>
+
+  <!-- ========== 引导区：在这里，你可以…… ========== -->
+  <section class="guide-section">
+    <div class="card guide-card">
+      <div class="g-icon">📖</div>
+      <div class="g-title">了解心理小知识</div>
+      <div class="g-desc">用轻松的方式，认识情绪、关系和自己</div>
+    </div>
+    <div class="card guide-card">
+      <div class="g-icon">💬</div>
+      <div class="g-title">和AI伙伴聊聊天</div>
+      <div class="g-desc">一个愿意倾听的朋友，随时都在</div>
+    </div>
+    <div class="card guide-card">
+      <div class="g-icon">🌱</div>
+      <div class="g-title">发现成长的力量</div>
+      <div class="g-desc">每个小改变，都值得被看见</div>
+    </div>
+  </section>
+
+  <!-- ========== 智能体入口 ========== -->
+  <section class="agent-grid">
+    <a href="chat.html" class="card agent-card">
+      <div class="agent-icon">🌿</div>
+      <div class="agent-name">韧 行</div>
+      <div class="agent-desc">
+        一个懂你的 AI 成长伙伴<br>
+        陪你聊聊最近的状态、一起学点心理学小方法
+      </div>
+    </a>
+    <div class="card agent-card coming-soon">
+      <div class="agent-icon">🤝</div>
+      <div class="agent-name">心 桥</div>
+      <div class="agent-desc">
+        专治各种"不知道怎么开口"<br>
+        模拟宿舍对话、练习沟通技巧
+      </div>
+      <span class="badge">即将上线</span>
+    </div>
+  </section>
+
+  <!-- ========== 知识预览 ========== -->
+  <section class="preview-section">
+    <a href="knowledge.html#emotion" class="card preview-card">
+      <div class="p-icon">💭</div>
+      <div class="p-title">情绪来了怎么办？</div>
+      <div class="p-desc">认识你的情绪朋友，学会和它相处</div>
+    </a>
+    <a href="knowledge.html#cognition" class="card preview-card">
+      <div class="p-icon">🔄</div>
+      <div class="p-title">换个角度看问题</div>
+      <div class="p-desc">想法变了，感受也就变了</div>
+    </a>
+    <a href="knowledge.html#behavior" class="card preview-card">
+      <div class="p-icon">🌱</div>
+      <div class="p-title">小行动带来大改变</div>
+      <div class="p-desc">从一个微小的习惯开始</div>
+    </a>
+  </section>
+
+  <!-- ========== 每日心语 ========== -->
+  <section class="daily-section">
+    <div class="card daily-card">
+      <div class="daily-label">· 每日心语 ·</div>
+      <div class="daily-icon" id="dailyIcon">🌱</div>
+      <div class="daily-text" id="dailyText"></div>
+      <button class="daily-refresh" onclick="refreshDaily()">🔄 换一句</button>
+    </div>
+  </section>
+
+  <!-- ========== 底部 ========== -->
+  <footer class="footer">
+    <div class="f-brand">韧竹小站</div>
+    <div class="f-team">韧心计划 · 北海职业学院心理健康教育团队</div>
+    <div class="f-school">北海职业学院</div>
+    <div class="designer-mark">design by yulinlin</div>
+  </footer>
+</div>
+
+<script>
+// ================================================================
+// 每日心语
+// ================================================================
+var DAILY_QUOTES = [
+  { icon: '🌱', text: '你已经比昨天的自己更进一步了，这本身就是一种成长。' },
+  { icon: '🎋', text: '竹子用了四年只长了3厘米，但从第五年开始，每天长30厘米。你也是。' },
+  { icon: '💪', text: '不是因为没有挫折才坚强，而是因为经历了挫折，才学会了坚强。' },
+  { icon: '🌟', text: '每一次跌倒，都在为下一次站得更稳做准备。' },
+  { icon: '🌿', text: '成长不是一场竞赛，你不需要和别人比速度，只需要比昨天的自己好一点点。' },
+  { icon: '🍃', text: '允许自己偶尔脆弱，那也是你真实的一部分。' },
+  { icon: '✨', text: '世界上没有白走的路，每一次尝试都在雕刻未来的你。' },
+  { icon: '🕊️', text: '当你想放弃的时候，想想当初为什么走到了这里。' },
+  { icon: '🌈', text: '风雨过后不一定有彩虹，但一定会有更清澈的天空。' },
+  { icon: '🌻', text: '向日葵看不到太阳也会开放，你要学会在阴天里依然向阳生长。' },
+  { icon: '🏔️', text: '爬上山顶不是为了让世界看到你，而是为了让你看到更大的世界。' },
+  { icon: '💡', text: '困扰你的不是事情本身，而是你对事情的看法。换个角度，世界就不一样了。' }
+];
+
+var dailyIdx = Math.floor(Math.random() * DAILY_QUOTES.length);
+
+function showDaily() {
+  var q = DAILY_QUOTES[dailyIdx];
+  document.getElementById('dailyIcon').textContent = q.icon;
+  document.getElementById('dailyText').textContent = q.text;
+}
+
+function refreshDaily() {
+  dailyIdx = (dailyIdx + 1) % DAILY_QUOTES.length;
+  var el = document.getElementById('dailyText');
+  el.style.opacity = '0';
+  setTimeout(function() {
+    showDaily();
+    el.style.opacity = '1';
+  }, 250);
+}
+
+showDaily();
+</script>
+
+</body>
+</html>

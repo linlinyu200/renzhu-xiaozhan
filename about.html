@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>关于我们 · 韧竹小站</title>
+<style>
+/* ============================================================
+   全局
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --cream: #fefaf4;
+  --peach: #fdf3ea;
+  --green-soft: #8db88a;
+  --green-mid: #6a9a6a;
+  --green-dark: #4a7a4a;
+  --pink: #f0c0c0;
+  --gold: #e0c878;
+  --text: #4a4038;
+  --text-dim: #9a8e80;
+  --text-light: #b8a898;
+  --border: rgba(0,0,0,0.06);
+  --card-bg: rgba(255,255,255,0.7);
+  --shadow: 0 4px 20px rgba(0,0,0,0.04);
+  --shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  background: linear-gradient(170deg, #fefaf4 0%, #fdf3ea 25%, #faf5ee 50%, #f4f2ea 75%, #fefaf4 100%);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   小花装饰
+   ============================================================ */
+.flowers-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.flower {
+  position: absolute; font-size: 15px; opacity: 0.3;
+  animation: floatFlower 8s ease-in-out infinite;
+}
+.flower:nth-child(1) { top: 4%; left: 5%; animation-delay: 0s; font-size: 20px; }
+.flower:nth-child(2) { top: 10%; right: 8%; animation-delay: 1.2s; font-size: 14px; }
+.flower:nth-child(3) { top: 28%; left: 3%; animation-delay: 2.5s; font-size: 18px; }
+.flower:nth-child(4) { top: 42%; right: 5%; animation-delay: 0.8s; font-size: 22px; }
+.flower:nth-child(5) { top: 58%; left: 6%; animation-delay: 3s; font-size: 15px; }
+.flower:nth-child(6) { top: 72%; right: 10%; animation-delay: 1.8s; font-size: 19px; }
+.flower:nth-child(7) { top: 85%; left: 12%; animation-delay: 2.2s; font-size: 16px; }
+.flower:nth-child(8) { top: 18%; left: 16%; animation-delay: 3.5s; font-size: 13px; }
+.flower:nth-child(9) { top: 62%; right: 18%; animation-delay: 0.5s; font-size: 17px; }
+.flower:nth-child(10) { top: 48%; left: 24%; animation-delay: 2.8s; font-size: 14px; }
+.flower:nth-child(11) { top: 6%; right: 24%; animation-delay: 1.5s; font-size: 21px; }
+.flower:nth-child(12) { top: 90%; right: 28%; animation-delay: 3.2s; font-size: 15px; }
+
+@keyframes floatFlower {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(3deg); }
+  50% { transform: translateY(-4px) rotate(-2deg); }
+  75% { transform: translateY(-16px) rotate(4deg); }
+}
+
+.container {
+  position: relative; z-index: 1;
+  max-width: 900px; margin: 0 auto;
+  padding: 0 18px 40px;
+}
+
+/* ============================================================
+   导航栏
+   ============================================================ */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 0; margin-bottom: 28px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-wrap: wrap; gap: 10px;
+  animation: fadeDown 0.6s ease-out;
+}
+.nav .logo {
+  font-size: 22px; font-weight: 700; letter-spacing: 4px;
+  color: var(--green-mid);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav .logo span { font-size: 24px; }
+.nav-links {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.nav-links a {
+  text-decoration: none; color: var(--text-dim);
+  font-size: 14px; letter-spacing: 2px; padding: 8px 16px;
+  border-radius: 10px; transition: all 0.25s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--green-mid);
+  background: rgba(125,184,138,0.08);
+}
+
+/* ============================================================
+   通用卡片
+   ============================================================ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px 24px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+/* ============================================================
+   页面头部
+   ============================================================ */
+.page-header {
+  text-align: center; padding: 32px 24px 40px;
+  animation: fadeUp 0.8s ease-out;
+}
+.page-header .header-icon { font-size: 48px; display: block; margin-bottom: 8px; }
+.page-header h1 {
+  font-size: 36px; font-weight: 700; letter-spacing: 6px;
+  background: linear-gradient(135deg, #6aaa7a 0%, #8dc89a 40%, #a8c870 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 6px rgba(100,160,120,0.2));
+  margin-bottom: 8px;
+}
+.page-header .sub {
+  font-size: 14px; color: var(--text-dim); letter-spacing: 3px;
+}
+
+/* ============================================================
+   内容卡片
+   ============================================================ */
+.content-card { animation: fadeUp 1s ease-out; }
+.content-card h2 {
+  font-size: 20px; color: var(--green-dark); letter-spacing: 3px;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+}
+.content-card p {
+  font-size: 14px; line-height: 2; color: var(--text);
+  letter-spacing: 1.5px; margin-bottom: 10px;
+}
+.content-card p:last-child { margin-bottom: 0; }
+
+/* 这里有什么 - 三个小圆点 */
+.feature-list {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-top: 8px;
+}
+.feature-item {
+  text-align: center; padding: 20px 14px;
+  border-radius: 14px;
+  background: rgba(125,184,138,0.04);
+  border: 1px solid rgba(125,184,138,0.08);
+}
+.feature-item .f-icon { font-size: 32px; margin-bottom: 8px; }
+.feature-item .f-name { font-size: 14px; font-weight: 600; color: var(--green-mid); letter-spacing: 2px; margin-bottom: 4px; }
+.feature-item .f-desc { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; line-height: 1.6; }
+
+/* 团队卡片 */
+.team-card { animation: fadeUp 1.3s ease-out; }
+.team-info { text-align: center; }
+.team-info .team-icon { font-size: 48px; margin-bottom: 10px; display: block; }
+.team-info .team-name { font-size: 18px; font-weight: 600; color: var(--green-dark); letter-spacing: 3px; margin-bottom: 6px; }
+.team-info .team-desc { font-size: 13px; color: var(--text-dim); letter-spacing: 2px; line-height: 1.8; }
+
+/* 底部CTA */
+.cta-card {
+  text-align: center;
+  animation: fadeUp 1.6s ease-out;
+}
+.cta-card .cta-text { font-size: 15px; color: var(--text); letter-spacing: 2px; margin-bottom: 14px; line-height: 1.8; }
+.cta-btn {
+  display: inline-block; padding: 12px 28px; border-radius: 14px;
+  background: rgba(125,184,138,0.1);
+  border: 1px solid rgba(125,184,138,0.2);
+  color: var(--green-mid); text-decoration: none;
+  font-size: 15px; letter-spacing: 2px; font-family: inherit;
+  transition: all 0.3s;
+}
+.cta-btn:hover {
+  background: rgba(125,184,138,0.18);
+  border-color: rgba(125,184,138,0.35);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   底部
+   ============================================================ */
+.footer {
+  text-align: center; padding: 28px 0 8px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  animation: fadeUp 1.8s ease-out;
+}
+.footer .f-brand {
+  font-size: 13px; color: var(--green-mid); letter-spacing: 2px; font-weight: 500;
+  margin-bottom: 2px;
+}
+.footer .f-team {
+  font-size: 12px; color: var(--text-dim); letter-spacing: 2px;
+  margin-bottom: 2px;
+}
+.footer .f-school {
+  font-size: 11px; color: var(--text-light); letter-spacing: 1px;
+}
+
+/* ============================================================
+   动画
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 768px) {
+  .container { max-width: 100%; }
+  .nav { padding: 14px 0; margin-bottom: 20px; }
+  .nav .logo { font-size: 18px; letter-spacing: 2px; }
+  .nav-links a { font-size: 12px; padding: 6px 10px; letter-spacing: 1px; }
+  .card { padding: 20px 18px; border-radius: 14px; margin-bottom: 14px; }
+  .page-header { padding: 24px 16px 32px; }
+  .page-header h1 { font-size: 28px; letter-spacing: 4px; }
+  .feature-list { grid-template-columns: 1fr; gap: 10px; }
+  .content-card h2 { font-size: 17px; }
+  .content-card p { font-size: 13px; }
+  .flower:nth-child(7), .flower:nth-child(8),
+  .flower:nth-child(11), .flower:nth-child(12) { display: none; }
+}
+
+@media (max-width: 640px) {
+  .page-header h1 { font-size: 24px; letter-spacing: 3px; }
+  .page-header .header-icon { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 小花装饰 -->
+<div class="flowers-bg">
+  <span class="flower">🌸</span><span class="flower">🌼</span><span class="flower">🌿</span>
+  <span class="flower">💮</span><span class="flower">🌺</span><span class="flower">🍃</span>
+  <span class="flower">🌷</span><span class="flower">✿</span><span class="flower">🌾</span>
+  <span class="flower">🌻</span><span class="flower">🪷</span><span class="flower">🌱</span>
+</div>
+
+<div class="container">
+
+  <!-- ========== 导航栏 ========== -->
+  <nav class="nav">
+    <a href="index.html" class="logo"><span>🎋</span>韧竹小站</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="knowledge.html">心理知识</a>
+      <a href="chat.html">和AI聊聊</a>
+      <a href="about.html" class="active">关于我们</a>
+    </div>
+  </nav>
+
+  <!-- ========== 页面头部 ========== -->
+  <header class="page-header">
+    <span class="header-icon">🎋</span>
+    <h1>关于韧竹小站</h1>
+    <p class="sub">一个温暖的小角落，陪你慢慢成长</p>
+  </header>
+
+  <!-- ========== 韧竹小站是什么 ========== -->
+  <section class="card content-card">
+    <h2>🌿 韧竹小站是什么？</h2>
+    <p>
+      韧竹小站是一个属于你的心理成长空间。在这里，你可以了解心理小知识，和一个叫"韧小行"的AI伙伴聊聊天，也可以做一些有趣的小练习。
+    </p>
+    <p>
+      我们相信，成长就像竹子一样——有时候你看不到变化，但其实每一步都在积蓄力量。从韧芽到韧苗再到韧竹，每个阶段都值得被看见。
+    </p>
+    <p>
+      这里不是课堂，也不是咨询室。这里更像一个可以歇歇脚的小站——累了就进来坐坐，想说说话就找个AI伙伴聊聊，想学点东西就翻翻小知识。
+    </p>
+  </section>
+
+  <!-- ========== 这里有什么 ========== -->
+  <section class="card content-card">
+    <h2>✨ 这里有什么？</h2>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="f-icon">📖</div>
+        <div class="f-name">心理小知识</div>
+        <div class="f-desc">用轻松的方式了解情绪、关系和自己</div>
+      </div>
+      <div class="feature-item">
+        <div class="f-icon">💬</div>
+        <div class="f-name">AI伙伴聊天</div>
+        <div class="f-desc">一个叫韧小行的AI伙伴，愿意倾听你的任何事</div>
+      </div>
+      <div class="feature-item">
+        <div class="f-icon">🌱</div>
+        <div class="f-name">成长小工具</div>
+        <div class="f-desc">实用的小方法，帮你发现自己的力量</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 韧心计划 ========== -->
+  <section class="card content-card">
+    <h2>💚 韧心计划</h2>
+    <p>
+      韧竹小站是"韧心计划"的一部分。韧心计划由北海职业学院心理健康教育团队发起，希望借助AI技术，让更多学生能够方便地接触到温暖、专业的心理成长支持。
+    </p>
+    <p>
+      我们是一群心理老师，同时也是一群相信"每个人都有成长力量"的人。我们知道——有时候你需要的不是建议，而是一个愿意认真听你说话的人。有时候你需要的不是大道理，而是一个小小的启发。
+    </p>
+    <p>
+      韧心计划的"韧"，是竹子的韧，也是每个人心里都有的那份坚韧。我们希望这个计划能像竹子一样，慢慢扎根，慢慢生长，最终陪伴更多人走过成长的每一步。
+    </p>
+  </section>
+
+  <!-- ========== 团队 ========== -->
+  <section class="card content-card team-card">
+    <h2>👥 我们是谁</h2>
+    <div class="team-info">
+      <span class="team-icon">🌿</span>
+      <div class="team-name">韧心团队</div>
+      <div class="team-desc">
+        北海职业学院<br>
+        心理健康教育团队
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA ========== -->
+  <section class="card cta-card">
+    <p class="cta-text">准备好和我们聊聊了吗？<br>韧小行在等你~</p>
+    <a href="chat.html" class="cta-btn">💬 去找韧小行聊聊</a>
+  </section>
+
+  <!-- ========== 底部 ========== -->
+  <footer class="footer">
+    <div class="f-brand">韧竹小站</div>
+    <div class="f-team">韧心计划 · 北海职业学院心理健康教育团队</div>
+    <div class="f-school">北海职业学院</div>
+  </footer>
+</div>
+
+</body>
+</html>
